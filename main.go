@@ -3,21 +3,41 @@ package main
 import (
 	"net/http"
 	"os"
+	"io/ioutil"
 
 	"golang.org/x/exp/slog"
+	"gopkg.in/yaml.v2"
 
+	models "github.com/edstef/goboyle/models"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/jwtauth/v5"
-	models "github.com/edstef/goboyle/models"
 )
 
 var tokenAuth *jwtauth.JWTAuth
 
 var mods *models.Models
 
-func init() {
-	tokenAuth = jwtauth.New("HS256", []byte("secret"), nil) // TODO: Read secret from config
+type Config struct {
+	PgConnString string `yaml:"PG_CONNECTION_STRING"`
+	Port         string `yaml:"PORT"`
+	JwtSecret    string `yaml:"JWT_SECRET"`
+}
+
+func loadConfig(presets string) *Config {
+	var c Config
+
+	file, err := ioutil.ReadFile(presets)
+	if err != nil {
+		// logger.Fatal(err, fmt.Sprintf("Error reading from %s", presets))
+	}
+
+	err = yaml.Unmarshal(file, &c)
+	if err != nil {
+		// logger.Fatal(err, "Error unmarshalling yaml")
+	}
+
+	return &c
 }
 
 func main() {
@@ -30,8 +50,11 @@ func main() {
 		},
 	}.NewJSONHandler(os.Stdout)
 
+	conf := loadConfig("goboyle.yaml")
 	logLevel := 0
-	mods = models.NewModels("postgres://postgres:@localhost:5432/sss?sslmode=disable", logLevel)
+	mods = models.NewModels(conf.PgConnString, logLevel)
+
+	tokenAuth = jwtauth.New("HS256", []byte(conf.JwtSecret), nil)
 
 	// Routes
 	r := chi.NewRouter()
@@ -60,5 +83,5 @@ func main() {
 		registerUnprotectedProfileEndpoints(r)
 	})
 
-	http.ListenAndServe(":8080", r)
+	http.ListenAndServe(":" + conf.Port, r)
 }
