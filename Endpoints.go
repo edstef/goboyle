@@ -8,9 +8,9 @@ import (
 	"github.com/go-chi/jwtauth/v5"
 )
 
-func getUserIdFromContext(ctx context.Context) string {
+func getProfileIdFromContext(ctx context.Context) string {
 	_, claims, _ := jwtauth.FromContext(ctx)
-	return claims["user_id"].(string)
+	return claims["profile_id"].(string)
 }
 
 func getRequestBody(r *http.Request, holder interface{}) error {

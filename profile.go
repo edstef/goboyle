@@ -1,21 +1,22 @@
 package main
 
 import (
-	"context"
+	"net/http"
 
-	models "github.com/edstef/goboyle/models"
-	"github.com/uptrace/bun"
+	"github.com/go-chi/chi/v5"
 )
 
-type Profile struct {
-	Id         string `bun:",pk,notnull,type:uuid,default:uuid_generate_v4()"`
-	Name       string `bun:"name,notnull"`
-	PictureURL string `bun:"name,notnull,default:'/defaults/1'"`
-	Theme      string `bun:"theme,notnull,default:'default_theme_1'"`
+func registerProtectedProfileEndpoints(r chi.Router) {
+	r.Get("/profile", getProfile)
+}
+
+func registerUnprotectedProfileEndpoints(r chi.Router) {
+	r.Post("/profile", createProfile)
 }
 
 func getProfile(w http.ResponseWriter, r *http.Request) {
-	profile, err := mods.GetProfileById(id)
+	profileId := getProfileIdFromContext(r.Context())
+	profile, err := mods.GetProfileById(profileId)
 	if err != nil {
 		// TODO: Log
 		ErrorResponse(w, http.StatusBadRequest, "")
@@ -37,7 +38,12 @@ func createProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	mods.CreateProfile(params.Name)
+	profile, err := mods.CreateProfile(params.Name)
+	if err != nil {
+		// TODO: Log
+		ErrorResponse(w, http.StatusBadRequest, "")
+		return
+	}
 
-	SuccessResponse(w, nil)
+	SuccessResponse(w, profile)
 }
