@@ -8,9 +8,9 @@ import (
 
 	"golang.org/x/exp/slog"
 
-	"github.com/go-chi/jwtauth/v5"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/jwtauth/v5"
 )
 
 var tokenAuth *jwtauth.JWTAuth
@@ -78,7 +78,6 @@ func main() {
 		})
 	})
 
-
 	// Unprotected Routes
 	r.Group(func(r chi.Router) {
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -107,7 +106,6 @@ func main() {
 			w.Write([]byte(tokenString))
 		})
 	})
-
 
 	http.ListenAndServe(":8080", r)
 }

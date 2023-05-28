@@ -1,12 +1,11 @@
 package main
 
 import (
-	"net/http"
-	"encoding/json"
 	"context"
+	"encoding/json"
+	"net/http"
 
 	"github.com/go-chi/jwtauth/v5"
-
 )
 
 func getUserIdFromContext(ctx context.Context) string {
