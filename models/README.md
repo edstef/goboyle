@@ -10,7 +10,7 @@ The database uses Postgres
 
 2. Create database for SSS
 
-	```create database healness;```
+	```create database sss;```
 
 3. Install uuid extension for IDs
 
