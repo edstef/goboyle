@@ -29,9 +29,5 @@ func (m *Models) GetProfileById(id string) (*Profile, error) {
 		Where("? = ?", bun.Ident("id"), id).
 		Scan(context.Background())
 
-	if err != nil {
-		return nil, err
-	}
-
-	return profile, nil
+	return profile, err
 }
