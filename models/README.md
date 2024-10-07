@@ -14,6 +14,8 @@ The database uses Postgres
 
 3. Install uuid extension for IDs
 
+	```\c sss```
+
 	```CREATE EXTENSION IF NOT EXISTS "uuid-ossp";```
 
 4. Run `go test` command to make sure everything is setup correctly, and DB tables get created

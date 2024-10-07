@@ -17,10 +17,12 @@ type Models struct {
 
 func (m *Models) CreateTables() error {
 	log.Print("Creating tables ...")
-	_, err := m.db.NewCreateTable().Model(&Profile{}).IfNotExists().Exec(context.Background())
-	if err != nil {
-		return err
-	}
+	m.db.NewCreateTable().Model(&User{}).
+		IfNotExists().Exec(context.Background())
+
+	m.db.NewCreateTable().Model(&UserToken{}).
+		ForeignKey(`("user") REFERENCES "users" ("id") ON DELETE CASCADE`).
+		IfNotExists().Exec(context.Background())
 
 	log.Print("Finisehd creating tables ...")
 	return nil
@@ -28,10 +30,8 @@ func (m *Models) CreateTables() error {
 
 func (m *Models) DropTables() error {
 	log.Print("Dropping tables ...")
-	_, err := m.db.NewDropTable().Model(&Profile{}).IfExists().Exec(context.Background())
-	if err != nil {
-		return err
-	}
+	m.db.NewDropTable().Model(&UserToken{}).IfExists().Exec(context.Background())
+	m.db.NewDropTable().Model(&User{}).IfExists().Exec(context.Background())
 
 	return nil
 }
