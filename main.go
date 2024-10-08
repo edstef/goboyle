@@ -1,9 +1,9 @@
 package main
 
 import (
+	"io/ioutil"
 	"net/http"
 	"os"
-	"io/ioutil"
 
 	"golang.org/x/exp/slog"
 	"gopkg.in/yaml.v2"
@@ -69,8 +69,11 @@ func main() {
 		r.Use(jwtauth.Verifier(tokenAuth))
 		r.Use(jwtauth.Authenticator)
 
+		r.Route("/user", func(rr chi.Router) {
+			registerProtectedUserEndpoints(rr)
+		})
+
 		registerProtectedJwtEndpoints(r)
-		registerProtectedProfileEndpoints(r)
 	})
 
 	// Unprotected Routes
@@ -79,9 +82,12 @@ func main() {
 			w.Write([]byte("welcome"))
 		})
 
-		registerUnprotectedJwtEndpoints(r)
-		registerUnprotectedProfileEndpoints(r)
+		r.Route("/jwt", func(rr chi.Router) {
+			registerUnprotectedJwtEndpoints(rr)
+		})
+
+		registerUnprotectedUserEndpoints(r)
 	})
 
-	http.ListenAndServe(":" + conf.Port, r)
+	http.ListenAndServe(":"+conf.Port, r)
 }
