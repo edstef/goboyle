@@ -3,8 +3,8 @@ package models_test
 import (
 	"testing"
 
-	"github.com/stretchr/testify/assert"
 	models "github.com/edstef/goboyle/models"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetUser(t *testing.T) {

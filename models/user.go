@@ -50,10 +50,10 @@ func (m *Models) UpsertUserToken(userId string, token string) error {
 	}
 
 	_, err = m.db.NewInsert().
-	    Model(userToken).
-	    On("CONFLICT (\"user\") DO UPDATE").
-	    Set("token = EXCLUDED.token").
-	    Exec(context.Background())
+		Model(userToken).
+		On("CONFLICT (\"user\") DO UPDATE").
+		Set("token = EXCLUDED.token").
+		Exec(context.Background())
 
 	return err
 }
@@ -61,9 +61,9 @@ func (m *Models) UpsertUserToken(userId string, token string) error {
 func (m *Models) ValidateUserToken(userId string, token string) error {
 	userToken := &UserToken{}
 	err := m.db.NewSelect().
-	    Model(userToken).
-	    Where("? = ?", bun.Ident("user"), userId).
-	    Scan(context.Background())
+		Model(userToken).
+		Where("? = ?", bun.Ident("user"), userId).
+		Scan(context.Background())
 
 	if err != nil {
 		return err
