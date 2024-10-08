@@ -14,10 +14,6 @@ import (
 	"github.com/go-chi/jwtauth/v5"
 )
 
-var tokenAuth *jwtauth.JWTAuth
-
-var mods *models.Models
-
 type Config struct {
 	PgConnString string `yaml:"PG_CONNECTION_STRING"`
 	Port         string `yaml:"PORT"`
@@ -29,16 +25,24 @@ func loadConfig(presets string) *Config {
 
 	file, err := ioutil.ReadFile(presets)
 	if err != nil {
-		// logger.Fatal(err, fmt.Sprintf("Error reading from %s", presets))
+		logger.Error(err.Error())
+		os.Exit(1)
 	}
 
 	err = yaml.Unmarshal(file, &c)
 	if err != nil {
-		// logger.Fatal(err, "Error unmarshalling yaml")
+		logger.Error(err.Error())
+		os.Exit(1)
 	}
 
 	return &c
 }
+
+const ReqIdKey = middleware.RequestIDKey
+
+var tokenAuth *jwtauth.JWTAuth
+var mods *models.Models
+var logger *slog.Logger
 
 func main() {
 	slogJSONHandler := slog.HandlerOptions{

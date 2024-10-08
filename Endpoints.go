@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
-	// "errors"
+	"errors"
 	"net/http"
 
 	"github.com/go-chi/jwtauth/v5"
@@ -20,19 +20,19 @@ func getRequestBody(r *http.Request, holder interface{}) error {
 	return err
 }
 
-// func LogError(ctx context.Context, err error, failBlock string) {
-// 	if ctx == nil {
-// 		ctx = context.Background()
-// 	}
-// 	if err == nil {
-// 		err = errors.New("No ERROR object passed.")
-// 	}
-// 	logger.Error(
-// 		err.Error(),
-// 		"fail_block", failBlock,
-// 		"trace_id", ctx.Value(ReqIdKey),
-// 	)
-// }
+func LogError(ctx context.Context, err error, failBlock string) {
+	if ctx == nil {
+		ctx = context.Background()
+	}
+	if err == nil {
+		err = errors.New("No ERROR object passed.")
+	}
+	logger.Error(
+		err.Error(),
+		"fail_block", failBlock,
+		"trace_id", ctx.Value(ReqIdKey),
+	)
+}
 
 func LASErrorResponse(r *http.Request, w http.ResponseWriter, status int, errorMessage string, err string, failBlock string) {
 	GetLogEntry(r).Error(err, "fail_block", failBlock)

@@ -46,7 +46,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 	token := models.GenerateUUID()
 	err = mods.UpsertUserToken(user.Id, token)
 	if err != nil {
-		// LogError(r.Context(), err.Error(), "createUser - UpsertUserToken")
+		LogError(r.Context(), err, "createUser - UpsertUserToken")
 	}
 
 	ret := struct {
